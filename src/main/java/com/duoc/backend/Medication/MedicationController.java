@@ -1,16 +1,29 @@
 package com.duoc.backend.Medication;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.duoc.backend.Medication.dto.MedicationCreateDto;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/medication")
 public class MedicationController {
 
-    @Autowired
-    private MedicationService medicationService;
+    private final MedicationService medicationService;
+    
+    public MedicationController(MedicationService medicationService) {
+        this.medicationService = medicationService;
+    }
 
     @GetMapping
     public List<Medication> getAllMedications() {
@@ -21,10 +34,19 @@ public class MedicationController {
     public Medication getMedicationById(@PathVariable Long id) {
         return medicationService.getMedicationById(id);
     }
-
     @PostMapping
-    public Medication saveMedication(@RequestBody Medication medication) {
-        return medicationService.saveMedication(medication);
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_ASISTENTE')")
+    public Medication saveMedication(@Valid @RequestBody MedicationCreateDto dto) {
+        
+        Medication safeMedication = new Medication();
+        
+        // Solo permitimos que se escriban los datos del formulario (DTO)
+        safeMedication.setName(dto.name());
+        safeMedication.setCost(dto.cost());
+        
+        // No tocamos ni el id reponsabilidad exclusiva del servidor
+
+        return medicationService.saveMedication(safeMedication);
     }
 
     @DeleteMapping("/{id}")

@@ -1,9 +1,9 @@
 package com.duoc.backend;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 
 public class Constants {
 
@@ -26,5 +26,8 @@ public class Constants {
         byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
     }
+
+    public static final String ROL_ADMIN = "ROLE_ADMIN";
+    public static final String ROL_ASISTENTE = "ROLE_ASISTENTE";
 
 }

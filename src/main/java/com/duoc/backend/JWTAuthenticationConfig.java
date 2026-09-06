@@ -1,42 +1,49 @@
 package com.duoc.backend;
 
-import io.jsonwebtoken.Jwts;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
-
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.duoc.backend.Constants.*;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.GrantedAuthority;
+
+import static com.duoc.backend.Constants.SUPER_SECRET_KEY;
+import static com.duoc.backend.Constants.getSigningKey;
+
+import io.jsonwebtoken.Jwts;
+
 @Configuration
 public class JWTAuthenticationConfig {
 
-    public String getJWTToken(String username) {
-        List<GrantedAuthority> grantedAuthorities = AuthorityUtils
-                .commaSeparatedStringToAuthorityList("ROLE_USER");
-
-
+    // recibe Los roles de la base de datos
+    public String getJWTToken(String username, Collection<? extends GrantedAuthority> authorities) {
 
         Map<String, Object> claims = new HashMap<>();
-        claims.put("authorities", grantedAuthorities.stream()
+        
+        // Usamos los roles reales que llegaron por parámetro
+        claims.put("authorities", authorities.stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList()));
+
+        //Calculamos el tiempo con api recomendadas 
+               
+        Instant now = Instant.now();
+        Instant expiration = now.plus(1440, ChronoUnit.MINUTES); // 24hrs 
 
         String token = Jwts.builder()
                 .claims()
                 .add(claims)
                 .subject(username)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 1440))
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(expiration))
                 .and()
                 .signWith(getSigningKey(SUPER_SECRET_KEY))
                 .compact();
 
         return "Bearer " + token;
     }
-
 }

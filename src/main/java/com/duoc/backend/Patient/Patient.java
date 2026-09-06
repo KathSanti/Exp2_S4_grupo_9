@@ -16,6 +16,12 @@ public class Patient {
     private int age;
     private String owner;
 
+    //se agrega la variable para no eliminar pacientes y dañar base de datos 
+    private boolean active = true;
+    
+
+   
+
     // Getters and Setters
     public Long getId() {
         return id;
@@ -63,5 +69,14 @@ public class Patient {
 
     public void setOwner(String owner) {
         this.owner = owner;
+    }
+
+    
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

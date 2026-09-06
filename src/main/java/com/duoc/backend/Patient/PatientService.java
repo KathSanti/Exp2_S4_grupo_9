@@ -1,5 +1,9 @@
 package com.duoc.backend.Patient;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +25,19 @@ public class PatientService {
         return patientRepository.save(patient);
     }
 
-    public void deletePatient(Long id) {
-        patientRepository.deleteById(id);
+    public List<Patient> getAllActivePatients() {
+    // Retorna únicamente los pacientes cuya propiedad active sea true
+    return StreamSupport.stream(patientRepository.findAll().spliterator(), false)
+            .filter(Patient::isActive)
+            .collect(Collectors.toList());
+    }
+
+    public void disablePatient(Long id) {
+    Patient patient = patientRepository.findById(id).orElse(null);
+    if (patient != null) {
+        patient.setActive(false);
+        patientRepository.save(patient); 
+    }
+    
     }
 }

@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  # 1. Tu Base de Datos MySQL
+  mysql-clinica:
+    build: .  # Esto le dice que lea tu Dockerfile en esta misma carpeta
+    container_name: mysql-clinica
+    ports:
+      - "3306:3306"
+    restart: always
+
+  # SonarQube para el análisis de código
+  sonarqube:
+    image: sonarqube:lts-community
+    container_name: sonarqube-server
+    ports:
+      - "9000:9000"
+    environment:
+      - SONAR_FORCEAUTHENTICATION=false
+    restart: always
+
+  # Jenkins Aunque no lo use aquí está configurado para la pauta
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins-server
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    restart: always

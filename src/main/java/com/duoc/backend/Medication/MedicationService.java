@@ -1,15 +1,18 @@
 package com.duoc.backend.Medication;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
+
+import org.springframework.stereotype.Service;
 
 @Service
 public class MedicationService {
 
-    @Autowired
+    
     private MedicationRepository medicationRepository;
+
+    public MedicationService(MedicationRepository medicationRepository) {
+        this.medicationRepository = medicationRepository;
+    }
 
     public List<Medication> getAllMedications() {
         return (List<Medication>) medicationRepository.findAll();

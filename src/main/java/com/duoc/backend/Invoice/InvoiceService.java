@@ -1,28 +1,35 @@
 package com.duoc.backend.Invoice;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import org.springframework.stereotype.Service;
+
 import com.duoc.backend.Care.Care;
 import com.duoc.backend.Care.CareRepository;
 import com.duoc.backend.Medication.Medication;
 import com.duoc.backend.Medication.MedicationRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
 @Service
 public class InvoiceService {
 
-    @Autowired
-    private InvoiceRepository invoiceRepository;
 
-    @Autowired
-    private MedicationRepository medicationRepository;
+    private final InvoiceRepository invoiceRepository;
+    private final MedicationRepository medicationRepository;
+    private final CareRepository careRepository;
 
-    @Autowired
-    private CareRepository careRepository;
+    public InvoiceService(
+        CareRepository careRepository, 
+        InvoiceRepository invoiceRepository, 
+        MedicationRepository medicationRepository) {
+            
+        this.careRepository = careRepository;
+        this.invoiceRepository = invoiceRepository;
+        this.medicationRepository = medicationRepository;
+    }
+
+
 
     public Iterable<Invoice> getAllInvoices() {
         return invoiceRepository.findAll();
